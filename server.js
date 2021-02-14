@@ -2,13 +2,13 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 
-const formatMessage = require('../src/utils/messages');
+const formatMessage = require('./utils/messages');
 const {
   joinUser,
   getCurrentUser,
   getDeactiveUser,
   getAllUsersInRoom,
-} = require('../src/utils/users');
+} = require('./utils/users');
 
 // Create Server
 const app = express();
@@ -62,7 +62,10 @@ io.on('connection', (socket) => {
       );
 
       const allUsers = getAllUsersInRoom(user.topic);
-      io.to(allUsers[0].topic).emit('displayParticipants', allUsers);
+
+      if (allUsers) {
+        io.to(allUsers[0].topic).emit('displayParticipants', allUsers);
+      }
     }
   });
 });
