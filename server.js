@@ -8,6 +8,7 @@ const {
   getCurrentUser,
   getDisconnectedUser,
   getAllUsersInRoom,
+  getAllTopics,
 } = require('./utils/users');
 
 // Create Server
@@ -44,6 +45,9 @@ io.on('connection', (socket) => {
 
     const allUsers = getAllUsersInRoom(currentUser.topic);
     io.to(currentUser.topic).emit('displayParticipants', allUsers);
+
+    const topics = getAllTopics();
+    socket.emit('displayTopics', topics);
   });
 
   socket.on('chatMessage', (message) => {
