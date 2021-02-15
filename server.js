@@ -6,7 +6,7 @@ const formatMessage = require('./utils/messages');
 const {
   joinUser,
   getCurrentUser,
-  getDeactiveUser,
+  getDisconnectedUser,
   getAllUsersInRoom,
 } = require('./utils/users');
 
@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-//Setup Routes
+//Setup Routes for testing
 const router = require('./router');
 app.use(router);
 
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    const user = getDeactiveUser(socket.id);
+    const user = getDisconnectedUser(socket.id);
 
     if (user) {
       io.to(user.topic).emit(
@@ -61,9 +61,10 @@ io.on('connection', (socket) => {
         formatMessage('admin', `${user.name} has left the chat`, false)
       );
 
+      // Update the list of participants
       const allUsers = getAllUsersInRoom(user.topic);
 
-      if (allUsers) {
+      if (allUsers.length) {
         io.to(allUsers[0].topic).emit('displayParticipants', allUsers);
       }
     }

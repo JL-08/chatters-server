@@ -11,7 +11,7 @@ const getCurrentUser = (id) => {
   return users.find((user) => user.id === id);
 };
 
-const getDeactiveUser = (id) => {
+const getDisconnectedUser = (id) => {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
@@ -26,6 +26,6 @@ const getAllUsersInRoom = (topic) => {
 module.exports = {
   joinUser,
   getCurrentUser,
-  getDeactiveUser,
+  getDisconnectedUser,
   getAllUsersInRoom,
 };
