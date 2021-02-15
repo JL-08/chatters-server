@@ -36,5 +36,4 @@ module.exports = {
   getDisconnectedUser,
   getAllUsersInRoom,
   getAllTopics,
-  isTopicExist,
 };
