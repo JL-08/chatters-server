@@ -24,9 +24,7 @@ const getAllUsersInRoom = (topic) => {
 };
 
 const getAllTopics = () => {
-  const topics = users.map(
-    (user) => user.topic.charAt(0).toUpperCase() + user.topic.slice(1)
-  );
+  const topics = users.map((user) => user.topic);
 
   // return topics with removed duplicates
   return topics.filter((topic, index) => topics.indexOf(topic) === index);
@@ -38,4 +36,5 @@ module.exports = {
   getDisconnectedUser,
   getAllUsersInRoom,
   getAllTopics,
+  isTopicExist,
 };

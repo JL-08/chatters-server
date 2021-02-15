@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
     io.to(currentUser.topic).emit('displayParticipants', allUsers);
 
     const topics = getAllTopics();
-    socket.emit('displayTopics', topics);
+    io.emit('displayTopics', topics);
   });
 
   socket.on('chatMessage', (message) => {
@@ -60,16 +60,25 @@ io.on('connection', (socket) => {
     const user = getDisconnectedUser(socket.id);
 
     if (user) {
-      io.to(user.topic).emit(
-        'message',
-        formatMessage('admin', `${user.name} has left the chat`, false)
-      );
+      const topics = getAllTopics();
+      const isTopicExist = topics.find((el) => el === user.topic);
 
-      // Update the list of participants
-      const allUsers = getAllUsersInRoom(user.topic);
+      if (isTopicExist) {
+        // Send a message to users in room
+        io.to(user.topic).emit(
+          'message',
+          formatMessage('admin', `${user.name} has left the chat`, false)
+        );
 
-      if (allUsers.length) {
-        io.to(allUsers[0].topic).emit('displayParticipants', allUsers);
+        // Update the list of participants in UI
+        const allUsers = getAllUsersInRoom(user.topic);
+
+        if (allUsers.length) {
+          io.to(user.topic).emit('displayParticipants', allUsers);
+        }
+      } else {
+        // Remove the empty room in the list of topics in UI
+        io.emit('displayTopics', topics);
       }
     }
   });
