@@ -2,6 +2,11 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config({ path: './config.env' });
+
 const formatMessage = require('./utils/messages');
 const {
   joinUser,
@@ -16,9 +21,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-//Setup Routes for testing
-const router = require('./router');
-app.use(router);
+//Setup Routes
+const router = require('./routes/topicsRoutes');
+app.use(express.json());
+app.use('/api/topic', router);
 
 // Socket.io connections and events
 io.on('connection', (socket) => {
@@ -83,6 +89,20 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then((con) => console.log('DB connection successful'));
 
 //Listen to server
 const PORT = process.env.PORT || 8000;
