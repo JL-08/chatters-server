@@ -15,7 +15,14 @@ const topicsSchema = new mongoose.Schema({
       'A topic name should be greater than or equal to 2 characters long',
     ],
   },
-  users: [String],
+  users: {
+    name: {
+      type: String,
+    },
+    socketId: {
+      type: String,
+    },
+  },
   messages: {
     sentBy: {
       type: String,
