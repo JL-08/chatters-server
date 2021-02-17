@@ -8,4 +8,10 @@ router
   .get(topicsController.getAllTopics)
   .post(topicsController.createTopic);
 
+router
+  .route('/:name')
+  .get(topicsController.getTopicByName)
+  .patch(topicsController.addMessage)
+  .delete(topicsController.deleteTopic);
+
 module.exports = router;

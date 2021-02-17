@@ -22,9 +22,11 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 //Setup Routes
-const router = require('./routes/topicsRoutes');
+const topicsRouter = require('./routes/topicsRoutes');
+const usersRouter = require('./routes/usersRoutes');
 app.use(express.json());
-app.use('/api/topic', router);
+app.use('/api/topic', topicsRouter);
+app.use('/api/user', usersRouter);
 
 // Socket.io connections and events
 io.on('connection', (socket) => {

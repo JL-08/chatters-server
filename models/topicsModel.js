@@ -15,28 +15,32 @@ const topicsSchema = new mongoose.Schema({
       'A topic name should be greater than or equal to 2 characters long',
     ],
   },
-  users: {
-    name: {
-      type: String,
+  users: [
+    {
+      name: {
+        type: String,
+      },
+      socketId: {
+        type: String,
+      },
     },
-    socketId: {
-      type: String,
+  ],
+  messages: [
+    {
+      sentBy: {
+        type: String,
+      },
+      messageText: {
+        type: String,
+        maxLength: 300,
+      },
+      sentAt: {
+        type: Date,
+        default: Date.now(),
+        select: false,
+      },
     },
-  },
-  messages: {
-    sentBy: {
-      type: String,
-    },
-    messageText: {
-      type: String,
-      maxLength: 300,
-    },
-    sentAt: {
-      type: Date,
-      default: Date.now(),
-      select: false,
-    },
-  },
+  ],
 });
 
 const Topic = mongoose.model('Topic', topicsSchema);
