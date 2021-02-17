@@ -1,5 +1,6 @@
 const Topic = require('../models/topicsModel');
 
+// TODO: change to appropriate status code
 exports.getAllTopics = async (req, res) => {
   const topic = await Topic.find();
 
