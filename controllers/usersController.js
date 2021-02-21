@@ -18,7 +18,7 @@ exports.addUser = async (req, res) => {
       $push: {
         users: {
           name: req.body.users.name,
-          socketId: req.body.users.id,
+          socketId: req.body.users.socketId,
         },
       },
     }
@@ -34,11 +34,11 @@ exports.addUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   await Topic.updateOne(
-    { name: req.params.name },
+    { name: req.params.topicName },
     {
       $pull: {
         users: {
-          name: req.body.users.name,
+          name: req.params.userName,
         },
       },
     }
@@ -46,5 +46,19 @@ exports.deleteUser = async (req, res) => {
 
   res.status(200).json({
     status: 'success',
+  });
+};
+
+exports.getUserSocketId = async (req, res) => {
+  const result = await Topic.find(
+    { name: req.params.topicName },
+    { users: { name: req.params.userName } }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: result,
+    },
   });
 };

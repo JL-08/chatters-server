@@ -54,7 +54,6 @@ io.on('connection', (socket) => {
       );
 
     let allUser = await getAllUsersInRoom(topic);
-    // const allUsers = getAllUsersInRoom(currentUser.topic);
     io.to(topic).emit('displayParticipants', allUser);
 
     // const topics = getAllTopics();
@@ -67,31 +66,26 @@ io.on('connection', (socket) => {
     io.to(topic).emit('message', formatMessage(name, message, true));
   });
 
-  socket.on('disconnect', () => {
-    const user = getDisconnectedUser(socket.id);
-
-    if (user) {
-      const topics = getAllTopics();
-      const isTopicExist = topics.find((el) => el === user.topic);
-
-      if (isTopicExist) {
-        // Send a message to users in room
-        io.to(user.topic).emit(
-          'message',
-          formatMessage('admin', `${user.name} has left the chat`, false)
-        );
-
-        // Update the list of participants in UI
-        const allUsers = getAllUsersInRoom(user.topic);
-
-        if (allUsers.length) {
-          io.to(user.topic).emit('displayParticipants', allUsers);
-        }
-      } else {
-        // Remove the empty room in the list of topics in UI
-        io.emit('displayTopics', topics);
-      }
-    }
+  socket.on('disconnect', async () => {
+    // removeUser(socket.id);
+    // let allUser = await getAllUsersInRoom(topic);
+    // // const topics = getAllTopics();
+    // // const isTopicExist = topics.find((el) => el === user.topic);
+    // if (allUser.length > 0) {
+    //   // Send a message to users in room
+    //   io.to(user.topic).emit(
+    //     'message',
+    //     formatMessage('admin', `${user.name} has left the chat`, false)
+    //   );
+    //   // Update the list of participants in UI
+    //   const allUsers = getAllUsersInRoom(user.topic);
+    //   if (allUsers.length) {
+    //     io.to(user.topic).emit('displayParticipants', allUsers);
+    //   }
+    // } else {
+    //   // Remove the empty room in the list of topics in UI
+    //   io.emit('displayTopics', topics);
+    // }
   });
 });
 

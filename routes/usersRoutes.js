@@ -7,6 +7,9 @@ router.route('/').post(usersController.addUser);
 
 router.route('/:topicName').get(usersController.getAllUsersInRoom);
 
-router.route('/:topicName/:userName').delete(usersController.deleteUser);
+router
+  .route('/:topicName/:userName')
+  .get(usersController.getUserSocketId)
+  .delete(usersController.deleteUser);
 
 module.exports = router;

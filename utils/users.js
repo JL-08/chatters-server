@@ -4,7 +4,7 @@ const axios = require('axios');
 const joinUser = async (id, name, topic) => {
   // get the topic in DB
   const res = await axios.get(`http://localhost:8000/api/topic/${topic}`);
-
+  console.log(res);
   // if topic exists in DB
   // add user to topic users list
   if (res) {
@@ -31,7 +31,7 @@ const getCurrentUser = (id) => {
   return users.find((user) => user.id === id);
 };
 
-const getDisconnectedUser = (id) => {
+const removeUser = (id) => {
   const index = users.findIndex((user) => user.id === id);
 
   if (index !== -1) {
@@ -54,7 +54,7 @@ const getAllTopics = () => {
 module.exports = {
   joinUser,
   getCurrentUser,
-  getDisconnectedUser,
+  removeUser,
   getAllUsersInRoom,
   getAllTopics,
 };
