@@ -5,9 +5,8 @@ const router = express.Router();
 
 router.route('/').post(usersController.addUser);
 
-router
-  .route('/:name')
-  .delete(usersController.deleteUser)
-  .get(usersController.getAllUsersInRoom);
+router.route('/:topicName').get(usersController.getAllUsersInRoom);
+
+router.route('/:topicName/:userName').delete(usersController.deleteUser);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const socketio = require('socket.io');
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config({ path: './config.env' });
 
@@ -25,37 +26,39 @@ const io = socketio(server);
 const topicsRouter = require('./routes/topicsRoutes');
 const usersRouter = require('./routes/usersRoutes');
 app.use(express.json());
+app.use(cors());
 app.use('/api/topic', topicsRouter);
 app.use('/api/user', usersRouter);
 
 // Socket.io connections and events
 io.on('connection', (socket) => {
-  socket.on('joinRoom', ({ name, topic }) => {
-    const currentUser = joinUser(socket.id, name, topic);
+  socket.on('joinRoom', async ({ name, topic }) => {
+    // log in DB
+    joinUser(socket.id, name, topic);
 
-    socket.join(currentUser.topic);
+    // Join socket in topic
+    socket.join(topic);
 
+    // Send a message to user
     socket.emit(
       'message',
-      formatMessage(
-        'admin',
-        `You have joined in ${currentUser.topic} room`,
-        false
-      )
+      formatMessage('admin', `You have joined in ${topic} room`, false)
     );
 
+    // Send a message to all users in room except the current user
     socket.broadcast
-      .to(currentUser.topic)
+      .to(topic)
       .emit(
         'message',
-        formatMessage('admin', `${currentUser.name} has joined the chat`, false)
+        formatMessage('admin', `${name} has joined the chat`, false)
       );
 
-    const allUsers = getAllUsersInRoom(currentUser.topic);
-    io.to(currentUser.topic).emit('displayParticipants', allUsers);
+    let allUser = await getAllUsersInRoom(topic);
+    // const allUsers = getAllUsersInRoom(currentUser.topic);
+    io.to(topic).emit('displayParticipants', allUser);
 
-    const topics = getAllTopics();
-    io.emit('displayTopics', topics);
+    // const topics = getAllTopics();
+    // io.emit('displayTopics', topics);
   });
 
   socket.on('chatMessage', (message) => {

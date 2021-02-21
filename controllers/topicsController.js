@@ -16,7 +16,7 @@ exports.getAllTopics = async (req, res) => {
 exports.createTopic = async (req, res) => {
   const newTopic = await Topic.create(req.body);
 
-  res.status(200).json({
+  res.status(201).json({
     status: 'success',
     data: {
       topic: newTopic,

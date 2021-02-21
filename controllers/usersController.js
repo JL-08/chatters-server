@@ -1,12 +1,12 @@
 const Topic = require('../models/topicsModel');
 
 exports.getAllUsersInRoom = async (req, res) => {
-  const data = await Topic.find({ name: req.params.name });
+  const result = await Topic.find({ name: req.params.topicName });
 
   res.status(200).json({
     status: 'success',
     data: {
-      users: data[0].users,
+      users: result[0].users,
     },
   });
 };
@@ -18,7 +18,7 @@ exports.addUser = async (req, res) => {
       $push: {
         users: {
           name: req.body.users.name,
-          socketId: req.body.users.socketId,
+          socketId: req.body.users.id,
         },
       },
     }
