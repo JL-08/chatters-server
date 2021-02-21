@@ -53,8 +53,8 @@ io.on('connection', (socket) => {
         formatMessage('admin', `${name} has joined the chat`, false)
       );
 
-    let allUser = await getAllUsersInRoom(topic);
-    io.to(topic).emit('displayParticipants', allUser);
+    // let allUser = await getAllUsersInRoom(topic);
+    // io.to(topic).emit('displayParticipants', allUser);
 
     // const topics = getAllTopics();
     // io.emit('displayTopics', topics);

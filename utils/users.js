@@ -4,10 +4,10 @@ const axios = require('axios');
 const joinUser = async (id, name, topic) => {
   // get the topic in DB
   const res = await axios.get(`http://localhost:8000/api/topic/${topic}`);
-  console.log(res);
+
   // if topic exists in DB
   // add user to topic users list
-  if (res) {
+  if (res.data.data.topic.length > 0) {
     axios
       .post('http://localhost:8000/api/user', {
         name: topic,
