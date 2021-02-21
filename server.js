@@ -34,7 +34,7 @@ app.use('/api/user', usersRouter);
 io.on('connection', (socket) => {
   socket.on('joinRoom', async ({ name, topic }) => {
     // log in DB
-    joinUser(socket.id, name, topic);
+    await joinUser(socket.id, name, topic);
 
     // Join socket in topic
     socket.join(topic);
@@ -53,8 +53,8 @@ io.on('connection', (socket) => {
         formatMessage('admin', `${name} has joined the chat`, false)
       );
 
-    // let allUser = await getAllUsersInRoom(topic);
-    // io.to(topic).emit('displayParticipants', allUser);
+    let allUser = await getAllUsersInRoom(topic);
+    io.to(topic).emit('displayParticipants', allUser);
 
     // const topics = getAllTopics();
     // io.emit('displayTopics', topics);
