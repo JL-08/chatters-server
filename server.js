@@ -62,8 +62,8 @@ io.on('connection', (socket) => {
     let allUser = await getAllUsersInRoom(topic);
     io.to(topic).emit('displayParticipants', allUser);
 
-    // const topics = getAllTopics();
-    // io.emit('displayTopics', topics);
+    const topics = await getAllTopics();
+    io.emit('displayTopics', topics);
   });
 
   socket.on('chatMessage', (message) => {
@@ -94,7 +94,9 @@ io.on('connection', (socket) => {
     } else {
       // Remove the empty room in the list of topics in UI
       await removeTopic(currentTopic);
-      // io.emit('displayTopics', topics);
+
+      const topics = await getAllTopics();
+      io.emit('displayTopics', topics);
     }
   });
 });

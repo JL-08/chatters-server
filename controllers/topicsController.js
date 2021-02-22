@@ -1,8 +1,9 @@
 const Topic = require('../models/topicsModel');
 
 // TODO: change to appropriate status code
+
 exports.getAllTopics = async (req, res) => {
-  const topic = await Topic.find();
+  const topic = await Topic.find().limit(10);
 
   res.status(200).json({
     status: 'success',
@@ -35,7 +36,6 @@ exports.getTopicByName = async (req, res) => {
   });
 };
 
-// !works but returns an outdated data
 exports.addMessage = async (req, res) => {
   const topics = await Topic.findOneAndUpdate(
     { name: req.params.name },
@@ -67,7 +67,10 @@ exports.deleteTopic = async (req, res) => {
 };
 
 exports.getMessagesFromTopic = async (req, res) => {
-  const messages = await Topic.find({ name: req.params.name }, { messages: 1 });
+  const messages = await Topic.find(
+    { name: req.params.name },
+    { messages: 1 }
+  ).limit(50);
 
   res.status(200).json({
     status: 'success',

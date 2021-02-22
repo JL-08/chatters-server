@@ -52,11 +52,9 @@ const getAllUsersInRoom = async (topic) => {
   return res.data.data.users.map((user) => user.name);
 };
 
-const getAllTopics = () => {
-  const topics = users.map((user) => user.topic);
-
-  // return topics with removed duplicates
-  return topics.filter((topic, index) => topics.indexOf(topic) === index);
+const getAllTopics = async () => {
+  const res = await axios.get(`http://localhost:8000/api/topic`);
+  return res.data.data.topic;
 };
 
 module.exports = {
