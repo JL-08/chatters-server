@@ -65,3 +65,12 @@ exports.deleteTopic = async (req, res) => {
     status: 'success',
   });
 };
+
+exports.getMessagesFromTopic = async (req, res) => {
+  const messages = await Topic.find({ name: req.params.name }, { messages: 1 });
+
+  res.status(200).json({
+    status: 'success',
+    data: messages,
+  });
+};

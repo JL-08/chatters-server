@@ -14,4 +14,6 @@ router
   .patch(topicsController.addMessage)
   .delete(topicsController.deleteTopic);
 
+router.route('/:name/messages').get(topicsController.getMessagesFromTopic);
+
 module.exports = router;

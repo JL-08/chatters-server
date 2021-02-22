@@ -1,12 +1,22 @@
 const moment = require('moment');
+const axios = require('axios');
 
-const formatMessage = (name, msg, isCurrentUserMsg) => {
+const formatMessage = (sentBy, messageText, isCurrentUserMsg) => {
   return {
-    name,
-    msg,
-    time: moment().format('h:mm a'),
+    sentBy,
+    messageText,
+    sentAt: moment().format('h:mm a'),
     isCurrentUserMsg,
   };
 };
 
-module.exports = formatMessage;
+const addMessage = (user, topic, message) => {
+  axios
+    .patch(`http://localhost:8000/api/topic/${topic}`, {
+      sentBy: user,
+      messageText: message,
+    })
+    .catch((err) => console.log(err));
+};
+
+module.exports = { formatMessage, addMessage };

@@ -32,12 +32,10 @@ const topicsSchema = new mongoose.Schema({
       },
       messageText: {
         type: String,
-        maxLength: 300,
       },
       sentAt: {
         type: Date,
         default: Date.now(),
-        select: false,
       },
     },
   ],

@@ -8,7 +8,7 @@ const cors = require('cors');
 
 dotenv.config({ path: './config.env' });
 
-const formatMessage = require('./utils/messages');
+const { formatMessage, addMessage } = require('./utils/messages');
 const {
   joinUser,
   getCurrentUser,
@@ -67,9 +67,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chatMessage', (message) => {
-    const { name, topic } = getCurrentUser(socket.id);
-
-    io.to(topic).emit('message', formatMessage(name, message, true));
+    // const { name, topic } = getCurrentUser(socket.id);
+    addMessage(currentUser, currentTopic, message);
+    io.to(currentTopic).emit(
+      'message',
+      formatMessage(currentUser, message, true)
+    );
   });
 
   socket.on('disconnect', async () => {
@@ -77,6 +80,7 @@ io.on('connection', (socket) => {
 
     var allUser = await getAllUsersInRoom(currentTopic);
 
+    console.log(allUser, allUser.length);
     if (allUser.length > 0) {
       // Send a message to users in room
       io.to(currentTopic).emit(
