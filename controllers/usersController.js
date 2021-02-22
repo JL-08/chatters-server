@@ -1,14 +1,17 @@
 const Topic = require('../models/topicsModel');
 
 exports.getAllUsersInRoom = async (req, res) => {
-  const result = await Topic.find({ name: req.params.topicName });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users: result[0].users,
-    },
-  });
+  try {
+    const result = await Topic.find({ name: req.params.topicName });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        users: result[0].users,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.addUser = async (req, res) => {
@@ -38,7 +41,7 @@ exports.deleteUser = async (req, res) => {
     {
       $pull: {
         users: {
-          name: req.params.userName,
+          socketId: req.params.socketId,
         },
       },
     }
@@ -49,16 +52,17 @@ exports.deleteUser = async (req, res) => {
   });
 };
 
-exports.getUserSocketId = async (req, res) => {
+exports.getUserBySocketId = async (req, res) => {
   const result = await Topic.find(
     { name: req.params.topicName },
-    { users: { name: req.params.userName } }
+    { users: { $elemMatch: { socketId: req.params.socketId } } }
   );
 
   res.status(200).json({
     status: 'success',
     data: {
-      user: result,
+      topic: req.params.topicName,
+      user: result[0].users,
     },
   });
 };

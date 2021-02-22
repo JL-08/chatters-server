@@ -12,7 +12,8 @@ const formatMessage = require('./utils/messages');
 const {
   joinUser,
   getCurrentUser,
-  getDisconnectedUser,
+  removeUser,
+  removeTopic,
   getAllUsersInRoom,
   getAllTopics,
 } = require('./utils/users');
@@ -32,7 +33,12 @@ app.use('/api/user', usersRouter);
 
 // Socket.io connections and events
 io.on('connection', (socket) => {
+  let currentTopic;
+  let currentUser;
+
   socket.on('joinRoom', async ({ name, topic }) => {
+    currentTopic = topic;
+    currentUser = name;
     // log in DB
     await joinUser(socket.id, name, topic);
 
@@ -67,25 +73,25 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', async () => {
-    // removeUser(socket.id);
-    // let allUser = await getAllUsersInRoom(topic);
-    // // const topics = getAllTopics();
-    // // const isTopicExist = topics.find((el) => el === user.topic);
-    // if (allUser.length > 0) {
-    //   // Send a message to users in room
-    //   io.to(user.topic).emit(
-    //     'message',
-    //     formatMessage('admin', `${user.name} has left the chat`, false)
-    //   );
-    //   // Update the list of participants in UI
-    //   const allUsers = getAllUsersInRoom(user.topic);
-    //   if (allUsers.length) {
-    //     io.to(user.topic).emit('displayParticipants', allUsers);
-    //   }
-    // } else {
-    //   // Remove the empty room in the list of topics in UI
-    //   io.emit('displayTopics', topics);
-    // }
+    await removeUser(currentTopic, socket.id);
+
+    var allUser = await getAllUsersInRoom(currentTopic);
+
+    if (allUser.length > 0) {
+      // Send a message to users in room
+      io.to(currentTopic).emit(
+        'message',
+        formatMessage('admin', `${currentUser} has left the chat`, false)
+      );
+
+      // Update the list of participants in UI
+      let users = allUser;
+      io.to(currentTopic).emit('displayParticipants', users);
+    } else {
+      // Remove the empty room in the list of topics in UI
+      await removeTopic(currentTopic);
+      // io.emit('displayTopics', topics);
+    }
   });
 });
 

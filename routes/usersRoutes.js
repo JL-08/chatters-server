@@ -8,8 +8,8 @@ router.route('/').post(usersController.addUser);
 router.route('/:topicName').get(usersController.getAllUsersInRoom);
 
 router
-  .route('/:topicName/:userName')
-  .get(usersController.getUserSocketId)
+  .route('/:topicName/:socketId')
+  .get(usersController.getUserBySocketId)
   .delete(usersController.deleteUser);
 
 module.exports = router;

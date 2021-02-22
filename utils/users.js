@@ -1,4 +1,4 @@
-const users = [];
+let user = {};
 const axios = require('axios');
 
 const joinUser = async (id, name, topic) => {
@@ -27,16 +27,24 @@ const joinUser = async (id, name, topic) => {
   }
 };
 
-const getCurrentUser = (id) => {
-  return users.find((user) => user.id === id);
+const getCurrentUser = async (topic, socketId) => {
+  const res = await axios
+    .get(`http://localhost:8000/api/user/${topic}/${socketId}`)
+    .catch((err) => console.log(err));
+
+  return res.data.data;
 };
 
-const removeUser = (id) => {
-  const index = users.findIndex((user) => user.id === id);
+const removeUser = (topic, socketId) => {
+  axios
+    .delete(`http://localhost:8000/api/user/${topic}/${socketId}`)
+    .catch((err) => console.log(err));
+};
 
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
+const removeTopic = (topic) => {
+  axios
+    .delete(`http://localhost:8000/api/topic/${topic}`)
+    .catch((err) => console.log(err));
 };
 
 const getAllUsersInRoom = async (topic) => {
@@ -55,6 +63,7 @@ module.exports = {
   joinUser,
   getCurrentUser,
   removeUser,
+  removeTopic,
   getAllUsersInRoom,
   getAllTopics,
 };
