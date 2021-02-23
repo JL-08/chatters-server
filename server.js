@@ -11,7 +11,6 @@ dotenv.config({ path: './config.env' });
 const { formatMessage, addMessage } = require('./utils/messages');
 const {
   joinUser,
-  getCurrentUser,
   removeUser,
   removeTopic,
   getAllUsersInRoom,

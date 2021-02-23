@@ -27,14 +27,6 @@ const joinUser = async (id, name, topic) => {
   }
 };
 
-const getCurrentUser = async (topic, socketId) => {
-  const res = await axios
-    .get(`http://localhost:8000/api/user/${topic}/${socketId}`)
-    .catch((err) => console.log(err));
-
-  return res.data.data;
-};
-
 const removeUser = async (topic, socketId) => {
   await axios
     .delete(`http://localhost:8000/api/user/${topic}/${socketId}`)
@@ -64,7 +56,6 @@ const getAllTopics = async () => {
 
 module.exports = {
   joinUser,
-  getCurrentUser,
   removeUser,
   removeTopic,
   getAllUsersInRoom,
