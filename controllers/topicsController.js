@@ -3,13 +3,13 @@ const Topic = require('../models/topicsModel');
 // TODO: change to appropriate status code
 
 exports.getAllTopics = async (req, res) => {
-  const topic = await Topic.find().limit(10);
+  const topics = await Topic.find().limit(10);
 
   res.status(200).json({
     status: 'success',
-    results: topic.length,
+    results: topics.length,
     data: {
-      topic,
+      topics,
     },
   });
 };
@@ -43,6 +43,7 @@ exports.addMessage = async (req, res) => {
       $push: {
         messages: {
           sentBy: req.body.sentBy,
+          socketId: req.body.socketId,
           messageText: req.body.messageText,
           sentAt: Date.now(),
         },

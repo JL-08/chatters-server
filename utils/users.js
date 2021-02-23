@@ -35,26 +35,31 @@ const getCurrentUser = async (topic, socketId) => {
   return res.data.data;
 };
 
-const removeUser = (topic, socketId) => {
-  axios
+const removeUser = async (topic, socketId) => {
+  await axios
     .delete(`http://localhost:8000/api/user/${topic}/${socketId}`)
     .catch((err) => console.log(err));
 };
 
-const removeTopic = (topic) => {
-  axios
+const removeTopic = async (topic) => {
+  await axios
     .delete(`http://localhost:8000/api/topic/${topic}`)
     .catch((err) => console.log(err));
 };
 
 const getAllUsersInRoom = async (topic) => {
   const res = await axios.get(`http://localhost:8000/api/user/${topic}`);
-  return res.data.data.users.map((user) => user.name);
+
+  if (res.data.data.users) {
+    return res.data.data.users.map((user) => user.name);
+  } else {
+    return [];
+  }
 };
 
 const getAllTopics = async () => {
   const res = await axios.get(`http://localhost:8000/api/topic`);
-  return res.data.data.topic;
+  return res.data.data.topics;
 };
 
 module.exports = {

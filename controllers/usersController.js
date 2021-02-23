@@ -1,18 +1,20 @@
 const Topic = require('../models/topicsModel');
 
 exports.getAllUsersInRoom = async (req, res) => {
-  let result;
-  try {
-    result = await Topic.find({ name: req.params.topicName });
-  } catch (err) {
-    console.log(err);
-  }
+  const result = await Topic.find({ name: req.params.topicName });
 
   if (result.length > 0) {
     res.status(200).json({
       status: 'success',
       data: {
         users: result[0].users,
+      },
+    });
+  } else {
+    res.status(200).json({
+      status: 'success',
+      data: {
+        users: [],
       },
     });
   }

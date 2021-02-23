@@ -39,6 +39,7 @@ io.on('connection', (socket) => {
   socket.on('joinRoom', async ({ name, topic }) => {
     currentTopic = topic;
     currentUser = name;
+
     // log in DB
     await joinUser(socket.id, name, topic);
 
@@ -48,7 +49,7 @@ io.on('connection', (socket) => {
     // Send a message to user
     socket.emit(
       'message',
-      formatMessage('admin', `You have joined in ${topic} room`, false)
+      formatMessage('admin', '0', `You have joined in ${topic} room`, false)
     );
 
     // Send a message to all users in room except the current user
@@ -56,8 +57,10 @@ io.on('connection', (socket) => {
       .to(topic)
       .emit(
         'message',
-        formatMessage('admin', `${name} has joined the chat`, false)
+        formatMessage('admin', '0', `${name} has joined the chat`, false)
       );
+
+    socket.emit('getSocketId', socket.id);
 
     let allUser = await getAllUsersInRoom(topic);
     io.to(topic).emit('displayParticipants', allUser);
@@ -68,11 +71,35 @@ io.on('connection', (socket) => {
 
   socket.on('chatMessage', (message) => {
     // const { name, topic } = getCurrentUser(socket.id);
-    addMessage(currentUser, currentTopic, message);
+    addMessage(currentUser, socket.id, currentTopic, message);
     io.to(currentTopic).emit(
       'message',
-      formatMessage(currentUser, message, true)
+      formatMessage(currentUser, socket.id, message, true)
     );
+  });
+
+  socket.on('changeTopic', async (topic, newTopic) => {
+    socket.leave(topic);
+    await removeUser(topic, socket.id);
+
+    var allUser = await getAllUsersInRoom(topic);
+
+    if (allUser.length > 0) {
+      socket.broadcast
+        .to(topic)
+        .emit(
+          'message',
+          formatMessage('admin', '0', `${currentUser} has left the chat`, false)
+        );
+
+      let users = allUser;
+      io.to(topic).emit('displayParticipants', users);
+    } else {
+      await removeTopic(topic);
+
+      const topics = await getAllTopics();
+      io.emit('displayTopics', topics);
+    }
   });
 
   socket.on('disconnect', async () => {
@@ -82,11 +109,12 @@ io.on('connection', (socket) => {
 
     console.log(allUser, allUser.length);
     if (allUser.length > 0) {
-      // Send a message to users in room
-      io.to(currentTopic).emit(
-        'message',
-        formatMessage('admin', `${currentUser} has left the chat`, false)
-      );
+      socket.broadcast
+        .to(currentTopic)
+        .emit(
+          'message',
+          formatMessage('admin', '0', `${currentUser} has left the chat`, false)
+        );
 
       // Update the list of participants in UI
       let users = allUser;

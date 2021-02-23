@@ -30,6 +30,9 @@ const topicsSchema = new mongoose.Schema({
       sentBy: {
         type: String,
       },
+      socketId: {
+        type: String,
+      },
       messageText: {
         type: String,
       },
